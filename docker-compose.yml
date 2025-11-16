@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: pg-orders
+    environment:
+      POSTGRES_DB: scalable_orders
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      # Datos persistentes de PostgreSQL
+      - pgdata:/var/lib/postgresql/data
+      # Script para crear y poblar las tablas al primer arranque
+      - ./db/schema_and_seed.sql:/docker-entrypoint-initdb.d/schema_and_seed.sql
+
+  backend:
+    build: ./backend
+    container_name: orders-backend
+    environment:
+      # OJO: usamos el nombre del servicio "db" como host
+      DATABASE_URL: postgres://postgres:postgres@db:5432/scalable_orders
+      PORT: 3000
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+
