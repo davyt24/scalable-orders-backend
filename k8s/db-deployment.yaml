@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-db
+  template:
+    metadata:
+      labels:
+        app: orders-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16
+          env:
+            - name: POSTGRES_DB
+              value: scalable_orders
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/postgresql/data
+            - name: init-script
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: db-data
+          emptyDir: {}   # simple para pruebas; no persistente
+        - name: init-script
+          configMap:
+            name: orders-db-init
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-db-init
+data:
+  schema_and_seed.sql: |
+    -- copia aquí el contenido de tu schema_and_seed.sql
+    -- (el mismo SQL que tienes en /db/schema_and_seed.sql)
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db              # ← nombre que usas en DATABASE_URL
+spec:
+  selector:
+    app: orders-db      # ← debe coincidir con labels del Deployment de Postgres
+  ports:
+    - port: 5432        # puerto que verá el backend
+      targetPort: 5432  # puerto del contenedor de Postgres
+
