@@ -1,0 +1,4 @@
+Label,# Samples,Average,Min,Max,Std. Dev.,Error %,Throughput,Received KB/sec,Sent KB/sec,Avg. Bytes
+GET /api/products,100,11,5,116,11.43,0.000%,3.36598,157.53,0.61,47924.0
+GET /api/orders,100,68,43,183,20.32,0.000%,3.35920,73.11,0.60,22285.0
+TOTAL,200,39,5,183,32.66,0.000%,6.69210,229.42,1.21,35104.5

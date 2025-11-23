@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: scalable-orders-backend:latest
-          imagePullPolicy: IfNotPresent
+          image: orders-backend:latest
+          imagePullPolicy: Never
           env:
             - name: PORT
               value: "3000"
